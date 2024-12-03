@@ -38,6 +38,9 @@ class BytesBridge extends BridgeAbstract
                 $item['content'] = $contentElement;
             }
             
+            // Extract the publication date
+            $dateElement = $article->find('article div span', 0);
+            $item['timestamp'] = $dateElement->innertext;
 
             $this->items[] = $item;
             $count++;
