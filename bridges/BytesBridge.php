@@ -12,7 +12,7 @@ class BytesBridge extends BridgeAbstract
     {        
         $site = getSimpleHTMLDOM(self::URI);
                 
-        $maxArticles = 20;
+        $maxArticles = 5;
         $count = 0;
 
         foreach($site->find('li') as $article) {
@@ -24,16 +24,23 @@ class BytesBridge extends BridgeAbstract
             // Get the link to the full article
             $linkElement = $article->find('a', 0);
             if (!$linkElement) continue;  // Skip if no link found
-            $item['uri'] = "https://bytes.dev$linkElement->href";
+            $postUrl = "https://bytes.dev$linkElement->href";
+            $item['uri'] = $postUrl;
            
 
             // Extract the title
             $titleElement = $article->find('h3 div', 0);
             $item['title'] = $titleElement ? $titleElement->plaintext : 'No title';
 
+            $fullArticle = getSimpleHTMLDOM($postUrl);
+            if ($fullArticle) {
+                $contentElement = $fullArticle->find('div.hidden + div', 0);
+                $item['content'] = $contentElement;
+            }
+            
 
-            // Add the item to the feed
             $this->items[] = $item;
+            $count++;
         }
     }
 
